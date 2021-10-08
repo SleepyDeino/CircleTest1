@@ -1,7 +1,6 @@
 ﻿import { Circle, Comment } from './Classes.js';
-import { draw } from './drawing.js';
+import { draw } from './Drawing.js';
 $(function () {
-    console.log("click!");
     //prepare canvas for future drawing
     var stage = new Konva.Stage({
         container: "bucket",
@@ -16,20 +15,42 @@ $(function () {
 
     //click listener
     document.addEventListener('click', function (event) {
+        //mouse location
+        var mouseX = event.clientX;
+        var mouseY = event.clientY;
         //hardcoded circle data
         var radius = 25;
         var color = 'blue';
-        var circ = new Circle(event.clientX, event.clientY, radius, color)
+        //check if there's already a circle
+        for (let i = 0; i < circleArr.length; ++i) {
+
+            if (circleArr[i].checkRange(mouseX, mouseY)) {
+                //start writing new comment
+                return
+            }
+        }
+        //create circle
+        var circ = new Circle(mouseX, mouseY, radius, color)
         //add circle to array
-        circleArr.splice(0, 1, circ);
+        circleArr.push(circ);
         //add circle to db
 
         //draw circle on screen
-        console.log(circleArr);
         stage.clear();
         draw(layer, circleArr);
-        
-        
         //document.body.textContent = 'x:' + cursorX + ', y:' + cursorY;
+    });
+    document.addEventListener('dblclick', function (event) {
+        console.log('double');
+        var mouseX = event.clientX;
+        var mouseY = event.clientY;
+        for (let i = 0; i < circleArr.length; ++i) {
+            if (circleArr[i].checkRange(mouseX, mouseY)) {
+                circleArr.splice(i, 1);
+                stage.clear();
+                draw(layer, circleArr);
+                return
+            }
+        }
     });
 });

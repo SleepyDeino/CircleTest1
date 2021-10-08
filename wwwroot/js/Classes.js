@@ -15,7 +15,7 @@ export class Circle {
     addComment(Comment) {
         this.comments.push(Comment)
     }
-    get comment() {
+    comments() {
         return this.comments;
     }
     circle() {
@@ -25,7 +25,21 @@ export class Circle {
             radius: this.radius,
             fill: this.color,
         });
-        console.log(circle);
         return circle;
+    }
+    checkRange(x, y) {
+        console.log(x >= this.posX - this.radius);
+        console.log(x <= this.poxX + this.radius);
+        console.log(y >= this.posY - this.radius);
+        console.log(y <= this.posY + this.radius);
+        console.log("----------------------------")
+        if (x >= this.posX - this.radius &&
+            x <= this.posX + this.radius &&
+            y >= this.posY - this.radius &&
+            y <= this.posY + this.radius) {
+            console.log('circle!!!')
+            return true
+        }
+        return false
     }
 }
