@@ -13,6 +13,18 @@ $(function () {
     //array to be filled by circles
     var circleArr = new Array();
     //load circles from DB
+    $.ajax({
+        url: "api/circles/GetCircles",
+        success: function (data) {
+            console.log("wow!");
+            console.log(data);
+        },
+        error: function (err) {
+            console.log("err");
+            console.log(err);
+        }
+    })
+    //load comments from DB
 
     //click listener
     document.addEventListener('click', function (event) {
@@ -42,11 +54,26 @@ $(function () {
         //add circle to array
         circleArr.push(circ);
         //add circle to db
+        var url = '/api/circles/id';
 
-        //draw circle on screen
+        fetch(url)
+            .then((resp) => resp.json())
+            .then(function (data) {
+                console.log(data)
+
+                var list = data
+                for (var i in list) {
+                    try {
+                        console.log(i);
+                    }
+                    catch (err) {
+                    }
+                }
+            });
+        
+        //draw circles on screen
         stage.clear();
         draw(layer, circleArr);
-        //document.body.textContent = 'x:' + cursorX + ', y:' + cursorY;
     });
     document.addEventListener('dblclick', function (event) {
         console.log('double');
@@ -56,7 +83,7 @@ $(function () {
             if (circleArr[i].checkRange(mouseX, mouseY)) {
                 //remove circle and it's comments from DB
 
-                //remove all the comments of the circle
+                //remove all the comments of the circle from the page
                 var elements = document.getElementsByClassName(circleArr[i].id);
                 while (elements.length > 0) {
                     elements[0].parentNode.removeChild(elements[0]);
