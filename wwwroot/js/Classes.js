@@ -1,7 +1,26 @@
 ﻿export class Comment {
-    constructor(text, color) {
+    constructor(text, color, offset) {
         this.text = text;
         this.color = color;
+        this.offset = offset;
+    }
+    //returns a div element for this comment
+    getDiv(Circle) {
+        const newDiv = document.createElement("div");
+        newDiv.setAttribute("contenteditable", true);
+        newDiv.setAttribute("class", Circle.id);
+        const newContent = document.createTextNode(this.text);
+        newDiv.appendChild(newContent);
+        newDiv.setAttribute("style", "width:fit-content;");
+        console.log(newDiv.offsetWidth);
+        console.log(getTextWidth(this.text, getCanvasFontSize(newDiv)));
+        var offsetX = Circle.posX - getTextWidth(newDiv.text, getCanvasFontSize(newDiv)) * 1.3;
+        var offsetY = Circle.posY + Circle.radius * (1 + this.offset);
+        newDiv.setAttribute("style", "height:25px;position: fixed; width:fit-content; min-width:40px; left:" + offsetX + "px;top:" + offsetY + "px; background-color:" + this.color + ";");
+        //set the click listener
+
+
+        return newDiv;
     }
 }
 export class Circle {
@@ -18,7 +37,8 @@ export class Circle {
     comments() {
         return this.comments;
     }
-    circle() {
+    //get a konva circle from the circle class
+    konvaCircle() {
         var circle = new Konva.Circle({
             x: this.posX,
             y: this.posY,
@@ -27,17 +47,12 @@ export class Circle {
         });
         return circle;
     }
+    //check if given position is inside the circle (or well, the square around said circle)
     checkRange(x, y) {
-        console.log(x >= this.posX - this.radius);
-        console.log(x <= this.poxX + this.radius);
-        console.log(y >= this.posY - this.radius);
-        console.log(y <= this.posY + this.radius);
-        console.log("----------------------------")
         if (x >= this.posX - this.radius &&
             x <= this.posX + this.radius &&
             y >= this.posY - this.radius &&
             y <= this.posY + this.radius) {
-            console.log('circle!!!')
             return true
         }
         return false

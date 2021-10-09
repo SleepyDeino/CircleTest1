@@ -1,5 +1,6 @@
 ﻿import { Circle, Comment } from './Classes.js';
 import { draw } from './Drawing.js';
+import { getTextWidth, getCanvasFontSize } from './textWidth.js'
 $(function () {
     //prepare canvas for future drawing
     var stage = new Konva.Stage({
@@ -21,11 +22,27 @@ $(function () {
         //hardcoded circle data
         var radius = 25;
         var color = 'blue';
+        var textFieldColor = 'grey';
         //check if there's already a circle
+        
         for (let i = 0; i < circleArr.length; ++i) {
-
+            
             if (circleArr[i].checkRange(mouseX, mouseY)) {
                 //start writing new comment
+                const newDiv = document.createElement("div");
+                newDiv.setAttribute("contenteditable", true);
+                newDiv.setAttribute("class", circleArr[i].id);
+                const newContent = document.createTextNode("Hi there and greetings!");
+                newDiv.appendChild(newContent);
+                newDiv.setAttribute("style", "width:fit-content;");
+                console.log(newDiv.offsetWidth);
+                console.log(getTextWidth(newDiv.text, getCanvasFontSize(newDiv)));
+                var offsetX = circleArr[i].posX - getTextWidth(newDiv.text, getCanvasFontSize(newDiv))*1.3;
+                var offsetY = circleArr[i].posY + circleArr[i].radius;
+                newDiv.setAttribute("style", "height:25px;position: fixed; width:fit-content; min-width:40px; left:" + offsetX + "px;top:" + offsetY +"px; background-color:" + textFieldColor + ";");
+                
+                console.log(newDiv);
+                document.body.appendChild(newDiv);
                 return
             }
         }
@@ -46,6 +63,11 @@ $(function () {
         var mouseY = event.clientY;
         for (let i = 0; i < circleArr.length; ++i) {
             if (circleArr[i].checkRange(mouseX, mouseY)) {
+                //remove circle and it's comments from DB
+
+                //remove all the comments of the circle
+
+                //remove the circle
                 circleArr.splice(i, 1);
                 stage.clear();
                 draw(layer, circleArr);
