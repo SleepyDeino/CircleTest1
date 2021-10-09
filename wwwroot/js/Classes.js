@@ -8,13 +8,12 @@ export class Comment {
     //returns a div element for this comment
     getDiv(Circle) {
         const newDiv = document.createElement("div");
-        newDiv.setAttribute("contenteditable", true);
         newDiv.setAttribute("class", Circle.id);
         const newContent = document.createTextNode(this.text);
         newDiv.appendChild(newContent);
-        console.log(newDiv.offsetWidth);
-        console.log(getTextWidth(newDiv.text, getCanvasFontSize(newDiv)));
-        var offsetX = Circle.posX - Math.max(getTextWidth(newDiv.text, getCanvasFontSize(newDiv))*1.3,40)/2;
+        //set all attributes needed for this project
+        newDiv.setAttribute("contenteditable", true);
+        var offsetX = Circle.posX - Math.max(getTextWidth(newDiv.innerHTML, getCanvasFontSize(newDiv)), 40) / 2;
         var offsetY = Circle.posY + Circle.radius * (1 + this.offset);
         newDiv.setAttribute("style", "height:25px;position: fixed; width:fit-content; min-width:40px; left:" + offsetX + "px;top:" + offsetY + "px; background-color:" + this.color + ";");
         //set the click listener
@@ -22,7 +21,22 @@ export class Comment {
             event.stopPropagation();
             return;
         });
-
+        newDiv.addEventListener("focusout", function (event) {
+            var offsetX = Circle.posX - Math.max(getTextWidth(newDiv.innerHTML, getCanvasFontSize(newDiv)), 40) / 2;
+            newDiv.style.setProperty("left", offsetX + 'px');
+            event.stopPropagation();
+        }, false);
+        newDiv.addEventListener("keypress", function (event) {
+            if (event.keyCode === 13) {
+                
+                // Cancel the default action, if needed
+                event.preventDefault();
+                
+                var offsetX = Circle.posX - Math.max(getTextWidth(newDiv.innerHTML, getCanvasFontSize(newDiv)), 40) / 2;
+                newDiv.style.setProperty("left", offsetX + 'px');
+                return false;
+            }
+        }, false);
         return newDiv;
     }
 }
