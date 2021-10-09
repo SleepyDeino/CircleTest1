@@ -1,4 +1,5 @@
-﻿export class Comment {
+﻿import { getTextWidth, getCanvasFontSize } from './textWidth.js'
+export class Comment {
     constructor(text, color, offset) {
         this.text = text;
         this.color = color;
@@ -11,31 +12,31 @@
         newDiv.setAttribute("class", Circle.id);
         const newContent = document.createTextNode(this.text);
         newDiv.appendChild(newContent);
-        newDiv.setAttribute("style", "width:fit-content;");
         console.log(newDiv.offsetWidth);
-        console.log(getTextWidth(this.text, getCanvasFontSize(newDiv)));
-        var offsetX = Circle.posX - getTextWidth(newDiv.text, getCanvasFontSize(newDiv)) * 1.3;
+        console.log(getTextWidth(newDiv.text, getCanvasFontSize(newDiv)));
+        var offsetX = Circle.posX - Math.max(getTextWidth(newDiv.text, getCanvasFontSize(newDiv))*1.3,40)/2;
         var offsetY = Circle.posY + Circle.radius * (1 + this.offset);
         newDiv.setAttribute("style", "height:25px;position: fixed; width:fit-content; min-width:40px; left:" + offsetX + "px;top:" + offsetY + "px; background-color:" + this.color + ";");
         //set the click listener
-
+        newDiv.addEventListener('click', function (event) {
+            event.stopPropagation();
+            return;
+        });
 
         return newDiv;
     }
 }
 export class Circle {
-    constructor(x, y, radius, color) {
+    constructor(x, y, radius, color, id) {
         this.posY = y;
         this.posX = x;
         this.radius = radius;
         this.color = color;
+        this.id = id;
         this.comments = new Array();
     }
     addComment(Comment) {
         this.comments.push(Comment)
-    }
-    comments() {
-        return this.comments;
     }
     //get a konva circle from the circle class
     konvaCircle() {

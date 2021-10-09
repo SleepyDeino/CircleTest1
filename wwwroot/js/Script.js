@@ -1,6 +1,6 @@
 ﻿import { Circle, Comment } from './Classes.js';
 import { draw } from './Drawing.js';
-import { getTextWidth, getCanvasFontSize } from './textWidth.js'
+
 $(function () {
     //prepare canvas for future drawing
     var stage = new Konva.Stage({
@@ -24,30 +24,21 @@ $(function () {
         var color = 'blue';
         var textFieldColor = 'grey';
         //check if there's already a circle
-        
+        var lastID = 0;
         for (let i = 0; i < circleArr.length; ++i) {
             
             if (circleArr[i].checkRange(mouseX, mouseY)) {
                 //start writing new comment
-                const newDiv = document.createElement("div");
-                newDiv.setAttribute("contenteditable", true);
-                newDiv.setAttribute("class", circleArr[i].id);
-                const newContent = document.createTextNode("Hi there and greetings!");
-                newDiv.appendChild(newContent);
-                newDiv.setAttribute("style", "width:fit-content;");
-                console.log(newDiv.offsetWidth);
-                console.log(getTextWidth(newDiv.text, getCanvasFontSize(newDiv)));
-                var offsetX = circleArr[i].posX - getTextWidth(newDiv.text, getCanvasFontSize(newDiv))*1.3;
-                var offsetY = circleArr[i].posY + circleArr[i].radius;
-                newDiv.setAttribute("style", "height:25px;position: fixed; width:fit-content; min-width:40px; left:" + offsetX + "px;top:" + offsetY +"px; background-color:" + textFieldColor + ";");
-                
-                console.log(newDiv);
-                document.body.appendChild(newDiv);
+                var offset = circleArr[i].comments.length;
+                var com = new Comment("comment " + offset, textFieldColor, offset);
+                circleArr[i].addComment(com);
+                document.body.appendChild(com.getDiv(circleArr[i]));
                 return
             }
+            lastID = circleArr[i].id;
         }
         //create circle
-        var circ = new Circle(mouseX, mouseY, radius, color)
+        var circ = new Circle(mouseX, mouseY, radius, color, lastID+1)
         //add circle to array
         circleArr.push(circ);
         //add circle to db
@@ -66,7 +57,10 @@ $(function () {
                 //remove circle and it's comments from DB
 
                 //remove all the comments of the circle
-
+                var elements = document.getElementsByClassName(circleArr[i].id);
+                while (elements.length > 0) {
+                    elements[0].parentNode.removeChild(elements[0]);
+                }
                 //remove the circle
                 circleArr.splice(i, 1);
                 stage.clear();
